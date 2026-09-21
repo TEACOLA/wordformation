@@ -33,9 +33,9 @@
   --text-muted: #666666;           /* 控えめなグレー */
   --text-blue: #0066CC;            /* アクセント純ブルー */
 
-  /* Typography */
-  --font-display: 'Outfit', 'Noto Sans JP', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  /* Typography - Helvetica / Swiss Style */
+  --font-display: "Helvetica Neue", Helvetica, Arial, "Hiragino Kaku Gothic ProN", sans-serif;
+  --font-mono: "Helvetica Neue", Helvetica, Arial, "Hiragino Kaku Gothic ProN", sans-serif;
 
   /* Layout */
   --container-max-width: 640px;
