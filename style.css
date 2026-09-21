@@ -68,9 +68,10 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding: 2.5rem 1.25rem 4rem;
+  padding: 2.5rem 1.25rem 3rem;
   display: flex;
   justify-content: center;
+  overflow-x: hidden;
 }
 
 /* 1-Column Container */
@@ -325,9 +326,17 @@ body {
    ========================================================================== */
 .cloud-section {
   background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  border-left: none;
+  border-right: none;
   border-radius: 0;
-  padding: 0;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  width: 100vw;
+  box-sizing: border-box;
+  padding: 1.75rem calc(50vw - 50% + 1.25rem);
+  margin-top: -0.25rem;
 }
 
 .tag-cloud {
@@ -545,5 +554,9 @@ body {
 
   .combined-text {
     font-size: clamp(1.15rem, 5vw, 1.45rem); /* 約1.5倍 */
+  }
+
+  .cloud-section {
+    padding: 1.25rem 1rem;
   }
 }
