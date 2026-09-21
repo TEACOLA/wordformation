@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20260922h">
 </head>
 <body>
   <div class="app-container">
@@ -71,17 +71,16 @@
         </div>
       </div>
     </section>
+  </div>
 
-    <!-- (3) 登録した言葉のタグクラウド -->
-    <section class="cloud-section" aria-label="登録された言葉一覧">
-
+  <!-- (3) 登録した言葉のタグクラウド（画面最下部まで全幅で直結） -->
+  <section class="cloud-section" aria-label="登録された言葉一覧">
+    <div class="cloud-inner">
       <div class="tag-cloud" id="tag-cloud">
         <!-- JSでタグ要素が挿入されます -->
       </div>
-    </section>
-
-
-  </div>
+    </div>
+  </section>
 
   <!-- Toast notification -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
