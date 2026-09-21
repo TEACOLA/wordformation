@@ -391,7 +391,7 @@
    */
   function setupEventListeners() {
     wordForm.addEventListener('submit', handleAddWord);
-    btnReset.addEventListener('click', handleReset);
+    if (btnReset) btnReset.addEventListener('click', handleReset);
     combinedPreview.addEventListener('click', handleCopy);
 
     // Keep input focused when clicking on background empty spaces (desktop only)
