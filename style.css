@@ -147,6 +147,7 @@ body {
 .slot-content {
   font-size: 1.55rem;
   font-weight: 400;
+  font-style: italic;
   color: var(--text-primary);
   text-align: center;
   word-break: break-word;
