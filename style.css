@@ -112,7 +112,7 @@ body {
   left: 0;
   right: 0;
   height: 3px;
-  background: var(--accent-gradient);
+  background: linear-gradient(90deg, #330066 0%, #660099 100%); /* 暗い紫色（Webセーフカラー） */
 }
 
 .word-slots {
