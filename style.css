@@ -1,0 +1,558 @@
+/* ==========================================================================
+   wordformation - Design System & Modern Styles
+   Theme: Pure White, Gray, Blue (Strictly NO Purple)
+   Color System: 100% Web Safe Colors (00, 33, 66, 99, CC, FF)
+   ========================================================================== */
+
+:root {
+  /* 100% Web Safe Colors: Pure White, Gray, Blue (Strictly no reddish/purple tones) */
+  --bg-main: #CCCCCC;              /* 眩しくない落ち着いたライトグレー・オフホワイト */
+  --bg-surface: #FFFFFF;           /* 純白 */
+  --bg-surface-subtle: #FFFFFF;    /* スロット背景 */
+  --bg-surface-hover: #CCFFFF;     /* 爽やかなペールアクアブルー（紫感ゼロ） */
+  
+  --border-subtle: #CCCCCC;        /* 繊細なグレー枠線 */
+  --border-medium: #999999;        /* 中間グレー枠線 */
+  --border-focus: #0066CC;         /* フォーカス時の鮮やかな青 */
+  --border-blue: #0066CC;          /* 純粋なブルー枠線 */
+  --border-blue-subtle: #99CCFF;   /* 淡いスカイブルー枠線 */
+
+  --accent-primary: #0066CC;       /* 純粋なクラシックブルー */
+  --accent-secondary: #003366;     /* 落ち着いたディープブルー */
+  --accent-light: #CCFFFF;         /* スッキリとした淡いシアンブルー */
+  --accent-gradient: linear-gradient(135deg, #0066CC 0%, #0099FF 100%);
+  --accent-glow: rgba(0, 102, 204, 0.25);
+  
+  --danger: #FF0033;
+  --danger-bg: #FFCCCC;
+  --danger-border: #FF0033;
+  --danger-text: #CC0033;
+
+  --text-primary: #000000;         /* 純粋な黒（最もクッキリ・紫感皆無） */
+  --text-secondary: #333333;       /* 濃いニュートラルグレー */
+  --text-muted: #666666;           /* 控えめなグレー */
+  --text-blue: #0066CC;            /* アクセント純ブルー */
+
+  /* Typography */
+  --font-display: 'Outfit', 'Noto Sans JP', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Layout */
+  --container-max-width: 640px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-spring: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Base Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-main);
+  /* 白とグレーのみの穏やかなグラデーション（紫は一切不使用） */
+  background-image: radial-gradient(ellipse at 50% 0%, #FFFFFF 0%, #CCCCCC 85%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: 2.5rem 1.25rem 4rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* 1-Column Container */
+.app-container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* ==========================================================================
+   (1) Stage Section - 最上部：造語インスピレーションステージ
+   ========================================================================== */
+.stage-section {
+  width: 100%;
+}
+
+.stage-card {
+  position: relative;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 1.5rem 1.25rem;
+  box-shadow: 
+    0 8px 24px -4px rgba(0, 0, 0, 0.08),
+    0 2px 6px -1px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow: hidden;
+  transition: transform var(--transition-smooth), border-color var(--transition-smooth);
+}
+
+.stage-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent-gradient);
+}
+
+.word-slots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.word-box {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #FFFFFF;
+  border: 1.5px solid var(--border-blue-subtle);
+  border-radius: var(--radius-md);
+  min-height: 70px;
+  justify-content: center;
+  padding: 0.85rem 0.75rem;
+  position: relative;
+  transition: all var(--transition-smooth);
+}
+
+.word-box:hover {
+  border-color: var(--border-medium);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.slot-content {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  word-break: break-word;
+  max-width: 100%;
+  line-height: 1.25;
+  transition: transform var(--transition-spring), opacity var(--transition-fast);
+}
+
+/* Word Slot Pop Animation */
+.word-pop {
+  animation: wordPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes wordPop {
+  0% {
+    transform: scale(0.85) translateY(4px);
+    opacity: 0.3;
+  }
+  60% {
+    transform: scale(1.08) translateY(-2px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1.5px solid var(--border-blue-subtle);
+  color: var(--accent-primary);
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: transform var(--transition-spring);
+}
+
+.connector.spin {
+  transform: rotate(180deg);
+}
+
+/* Combined Preview & Copy Bar */
+.combined-bar {
+  display: flex;
+  justify-content: center;
+}
+
+.combined-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1.1rem;
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth);
+}
+
+.combined-preview:hover {
+  background: #FFFFFF;
+  border-color: var(--border-medium);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.combined-preview:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.combined-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-blue);
+  letter-spacing: 0.02em;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+
+.copy-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 0.15rem 0.45rem;
+  background: #CCCCCC;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.combined-preview:hover .copy-hint {
+  color: var(--text-primary);
+  background: #999999;
+  color: #FFFFFF;
+}
+
+/* ==========================================================================
+   (2) Input Section - 言葉を入力するフォーム
+   ========================================================================== */
+.input-section {
+  width: 100%;
+}
+
+.word-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-medium);
+  border-radius: var(--radius-full);
+  padding: 0.4rem 0.5rem 0.4rem 1.4rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  transition: all var(--transition-fast);
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--accent-primary);
+  box-shadow: 
+    0 4px 16px rgba(0, 102, 204, 0.18),
+    0 0 0 3px var(--accent-glow);
+}
+
+.word-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  padding: 0.5rem 0;
+}
+
+.word-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.submit-btn {
+  background: #0066CC;
+  border: 1px solid #0066CC;
+  border-radius: var(--radius-full);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.55rem 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all var(--transition-fast);
+}
+
+.submit-btn:hover {
+  background: #003366;
+  border-color: #003366;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+.submit-btn:active {
+  transform: scale(0.96);
+}
+
+
+/* ==========================================================================
+   (3) Tag Cloud Section - 登録した言葉一覧
+   ========================================================================== */
+.cloud-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  min-height: 80px;
+  align-content: flex-start;
+}
+
+/* Individual Tag */
+.word-tag {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  background: #FFFFFF;
+  border: 1.5px solid var(--border-blue-subtle);
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  max-width: 100%;
+  word-break: break-word;
+  transition: all var(--transition-fast);
+  animation: tagAppear 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes tagAppear {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Active in Stage highlight: 純粋な青背景に白文字 */
+.word-tag.is-active {
+  border-color: var(--accent-primary);
+  background: #0066CC;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+/* Tag Hover - Intuitive Deletion Indicator */
+.word-tag:hover {
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+  color: var(--danger-text);
+  transform: translateY(-1px);
+}
+
+.word-tag:hover::after {
+  content: '×';
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--danger);
+  margin-left: 0.15rem;
+  line-height: 1;
+}
+
+.word-tag:active {
+  transform: scale(0.92);
+}
+
+/* Tag Leaving Animation (on instant delete) */
+.word-tag.is-leaving {
+  animation: tagDisappear 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes tagDisappear {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.4);
+    opacity: 0;
+    margin-right: -2rem;
+  }
+}
+
+.cloud-empty-msg {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+  width: 100%;
+  padding: 2rem 0;
+}
+
+/* ==========================================================================
+   Footer & Utility
+   ========================================================================== */
+.app-footer {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.footer-btn {
+  background: #FFFFFF;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-full);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.footer-btn:hover {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  background: #FFFFFF;
+}
+
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #000000;
+  border: 1px solid #333333;
+  color: #FFFFFF;
+  font-size: 0.85rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-full);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: all var(--transition-fast);
+  z-index: 100;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 520px) {
+  body {
+    padding: 1.25rem 0.75rem 3rem;
+  }
+
+  .app-container {
+    gap: 1.25rem;
+  }
+
+  .stage-card {
+    padding: 1.25rem 0.9rem 1rem;
+  }
+
+  .word-slots {
+    gap: 0.45rem;
+  }
+
+  .slot-content {
+    font-size: clamp(0.95rem, 4.2vw, 1.3rem);
+  }
+
+  .word-box {
+    min-height: 58px;
+    padding: 0.5rem 0.35rem;
+  }
+
+  .connector {
+    width: 28px;
+    height: 28px;
+  }
+
+  .connector svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .word-input {
+    font-size: 16px; /* iOS Safariの自動ズームを完全防止 */
+  }
+
+  .input-wrapper {
+    padding: 0.35rem 0.4rem 0.35rem 1rem;
+  }
+
+  .submit-btn {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .combined-preview {
+    max-width: 100%;
+    padding: 0.45rem 0.9rem;
+  }
+
+  .combined-text {
+    font-size: 0.95rem;
+  }
+}

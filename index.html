@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>wordformation</title>
+  <meta name="description" content="言葉を登録して、ランダムに組み合わさる2つの言葉から新しい造語を生み出すサービス。">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- (1) 言葉を入力するフォーム（最上段） -->
+    <section class="input-section" aria-label="言葉の登録">
+      <form id="word-form" class="word-form" autocomplete="off">
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="word-input" 
+            class="word-input" 
+            maxlength="500" 
+            placeholder="words words"
+            autofocus 
+            aria-label="登録したい言葉"
+          />
+          <button type="submit" class="submit-btn" id="submit-btn" title="登録 (Enter)" aria-label="登録">
+            <span class="enter-badge">↵ Enter</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- (2) 造語インスピレーションステージ -->
+    <section class="stage-section" aria-label="造語ステージ">
+      <div class="stage-card" id="stage-card">
+        <div class="word-slots">
+          <div class="word-box slot-a" id="slot-a-wrapper">
+            <div class="slot-content" id="word-a">word</div>
+          </div>
+          
+          <div class="connector" id="connector-icon" title="組み合わせ">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </div>
+
+          <div class="word-box slot-b" id="slot-b-wrapper">
+            <div class="slot-content" id="word-b">formation</div>
+          </div>
+        </div>
+
+        <!-- 結合プレビュー ＆ クイックコピー -->
+        <div class="combined-bar">
+          <div class="combined-preview" id="combined-preview" title="copy">
+            <span class="combined-text" id="combined-text">wordformation</span>
+            <span class="copy-hint" id="copy-hint">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>copy</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- (3) 登録した言葉のタグクラウド -->
+    <section class="cloud-section" aria-label="登録された言葉一覧">
+
+      <div class="tag-cloud" id="tag-cloud">
+        <!-- JSでタグ要素が挿入されます -->
+      </div>
+    </section>
+
+    <!-- Footer / Utility -->
+    <footer class="app-footer">
+      <div class="footer-actions">
+        <button type="button" class="footer-btn" id="btn-reset" title="clear">
+          clear
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js?v=20260922f"></script>
+</body>
+</html>
