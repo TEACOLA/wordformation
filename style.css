@@ -146,7 +146,7 @@ body {
 
 .slot-content {
   font-size: 1.55rem;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--text-primary);
   text-align: center;
   word-break: break-word;
