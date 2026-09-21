@@ -218,6 +218,16 @@
 
     setTimeout(() => {
       words = words.filter(w => w !== word);
+
+      // 言葉aと言葉bが無くなったら（登録単語が0語になったら）初期化してリロード
+      if (words.length === 0) {
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch (e) {}
+        location.reload();
+        return;
+      }
+
       saveWords();
       renderTagCloud();
 
