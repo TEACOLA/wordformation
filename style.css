@@ -347,7 +347,7 @@ body {
   padding: 0.45rem 0.85rem;
   background: #FFFFFF;
   border: 1.5px solid var(--border-blue-subtle);
-  border-radius: 0;
+  border-radius: var(--radius-full);
   color: var(--text-primary);
   font-size: 0.92rem;
   font-weight: 500;
