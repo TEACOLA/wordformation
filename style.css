@@ -68,9 +68,10 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding: 2.5rem 1.25rem 3rem;
+  padding: 2.5rem 0 0 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   overflow-x: hidden;
 }
 
@@ -81,6 +82,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
+  flex: 1;
+  padding: 0 1.25rem;
+  box-sizing: border-box;
 }
 
 /* ==========================================================================
@@ -327,7 +331,7 @@ body {
 .cloud-section {
   background: var(--bg-surface);
   border-top: 1px solid var(--border-subtle);
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: none;
   border-left: none;
   border-right: none;
   border-radius: 0;
@@ -335,8 +339,11 @@ body {
   margin-right: calc(-50vw + 50%);
   width: 100vw;
   box-sizing: border-box;
-  padding: 1.75rem calc(50vw - 50% + 1.25rem);
+  padding: 1.75rem calc(50vw - 50% + 1.25rem) 4rem;
   margin-top: -0.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .tag-cloud {
@@ -465,10 +472,11 @@ body {
 /* Responsive adjustments */
 @media (max-width: 520px) {
   body {
-    padding: 1.25rem 0.75rem 3rem;
+    padding: 1.25rem 0 0 0;
   }
 
   .app-container {
+    padding: 0 0.75rem;
     gap: 1.25rem;
   }
 
