@@ -9,6 +9,8 @@
   // Constants & Storage Keys
   const STORAGE_KEY = 'wordformation_words';
   const DEFAULT_WORDS = ['word', 'formation'];
+  const MAX_WORD_LENGTH = 32;       // 1単語の最大文字数
+  const MAX_WORDS_PER_SUBMIT = 500; // 一度に登録できる最大単語数
 
   // DOM Elements
   const wordForm = document.getElementById('word-form');
@@ -69,7 +71,7 @@
           const sanitized = [];
           parsed.forEach(item => {
             if (typeof item === 'string') {
-              const parts = item.trim().split(/[\s\u3000]+/).filter(w => w.length > 0);
+              const parts = item.trim().split(/[\s\u3000]+/).filter(w => w.length > 0 && w.length <= MAX_WORD_LENGTH);
               parts.forEach(part => {
                 if (!sanitized.includes(part)) {
                   sanitized.push(part);
@@ -403,9 +405,9 @@
     e.preventDefault();
     const raw = wordInput.value;
     // 半角スペース・全角スペース・タブ・改行等で確実に分割
-    const tokens = raw.trim().split(/[\s\u3000\t\r\n]+/).filter(w => w.length > 0);
+    let rawTokens = raw.trim().split(/[\s\u3000\t\r\n]+/).filter(w => w.length > 0);
 
-    if (tokens.length === 0) {
+    if (rawTokens.length === 0) {
       // 入力フォームが空の状態でEnterを押したら、組み合わせをランダムに更新（シャッフル）
       rollStageWords();
       wordInput.value = '';
@@ -413,8 +415,33 @@
       return;
     }
 
+    // 一度に登録できる単語数は最大500語まで
+    let exceededMaxWords = false;
+    if (rawTokens.length > MAX_WORDS_PER_SUBMIT) {
+      rawTokens = rawTokens.slice(0, MAX_WORDS_PER_SUBMIT);
+      exceededMaxWords = true;
+    }
+
+    // 1単語の最大文字数は32文字まで（32文字以下の単語のみ有効）
+    let hasOverlengthWord = false;
+    const validTokens = [];
+    rawTokens.forEach(t => {
+      if (t.length <= MAX_WORD_LENGTH) {
+        validTokens.push(t);
+      } else {
+        hasOverlengthWord = true;
+      }
+    });
+
+    if (validTokens.length === 0) {
+      showToast(`言葉は1単語${MAX_WORD_LENGTH}文字以内で入力してください`);
+      wordInput.value = '';
+      ensureInputFocus();
+      return;
+    }
+
     // 重複を除外したトークン一覧（入力順を保持）
-    const uniqueTokens = [...new Set(tokens)];
+    const uniqueTokens = [...new Set(validTokens)];
     const newWords = [];
     const existingWords = [];
 
@@ -428,11 +455,14 @@
 
     if (newWords.length === 0) {
       // すべて登録済みの場合
-      if (uniqueTokens.length === 1) {
-        showToast(`「${uniqueTokens[0]}」はすでに登録されています`);
-      } else {
-        showToast('入力された言葉はすべて登録済みです');
+      let msg = uniqueTokens.length === 1
+        ? `「${uniqueTokens[0]}」はすでに登録されています`
+        : '入力された言葉はすべて登録済みです';
+      if (hasOverlengthWord) {
+        msg += `（${MAX_WORD_LENGTH}文字超の言葉は除外されました）`;
       }
+      showToast(msg);
+
       if (pinnedSlot === 'a') {
         rollStageWords(null, uniqueTokens[0]);
       } else if (pinnedSlot === 'b') {
@@ -459,19 +489,26 @@
     // ステージを更新
     if (pinnedSlot === 'a') {
       rollStageWords(null, newWords[0]);
-      if (newWords.length >= 2) {
-        showToast(`${newWords.length} 語を登録しました`);
-      }
     } else if (pinnedSlot === 'b') {
       rollStageWords(newWords[0], null);
-      if (newWords.length >= 2) {
-        showToast(`${newWords.length} 語を登録しました`);
-      }
     } else if (newWords.length >= 2) {
       rollStageWords(newWords[0], newWords[1]);
-      showToast(`${newWords.length} 語を登録しました`);
     } else {
       rollStageWords(newWords[0]);
+    }
+
+    // トースト通知（語数、上限・文字数オーバー時の注記）
+    let toastMsg = '';
+    if (exceededMaxWords) {
+      toastMsg = `先頭${MAX_WORDS_PER_SUBMIT}語のうち ${newWords.length} 語を登録しました`;
+    } else if (newWords.length >= 2) {
+      toastMsg = `${newWords.length} 語を登録しました`;
+    }
+    if (hasOverlengthWord) {
+      toastMsg += toastMsg ? `（${MAX_WORD_LENGTH}文字超は除外）` : `${MAX_WORD_LENGTH}文字を超える言葉は除外されました`;
+    }
+    if (toastMsg) {
+      showToast(toastMsg);
     }
   }
 
