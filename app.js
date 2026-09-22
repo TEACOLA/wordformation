@@ -15,7 +15,8 @@
   const wordInput = document.getElementById('word-input');
   const slotAEl = document.getElementById('word-a');
   const slotBEl = document.getElementById('word-b');
-  const pinBtn = document.getElementById('pin-btn');
+  const pinBtnA = document.getElementById('pin-btn-a');
+  const pinBtnB = document.getElementById('pin-btn-b');
   const connectorIcon = document.getElementById('connector-icon');
   const combinedPreview = document.getElementById('combined-preview');
   const combinedText = document.getElementById('combined-text');
@@ -29,7 +30,7 @@
   let words = [];
   let currentWordA = '';
   let currentWordB = '';
-  let isSlotAPinned = false;
+  let pinnedSlot = null; // 'a' | 'b' | null（排他的ピン留め）
 
   /**
    * Initialize Application
@@ -87,28 +88,39 @@
   }
 
   /**
-   * Toggle Pin (lock) state for slot A
+   * Toggle Pin (lock) state for slot A or B (Mutually exclusive: only one can be pinned)
+   * @param {'a' | 'b'} slot
    */
-  function togglePinSlotA() {
-    if (words.length === 0 || !currentWordA || currentWordA === '—') return;
-    isSlotAPinned = !isSlotAPinned;
+  function togglePinSlot(slot) {
+    if (words.length === 0) return;
+    if (slot === 'a' && (!currentWordA || currentWordA === '—')) return;
+    if (slot === 'b' && (!currentWordB || currentWordB === '—' || currentWordB === '...')) return;
+
+    // 同じスロットを押したら解除、違うスロットを押したらそちらに切り替え
+    if (pinnedSlot === slot) {
+      pinnedSlot = null;
+    } else {
+      pinnedSlot = slot;
+    }
     updatePinDOM();
     ensureInputFocus();
   }
 
   /**
-   * Update Pin Button UI state
+   * Update Pin Button UI states
    */
   function updatePinDOM() {
-    if (!pinBtn) return;
-    if (isSlotAPinned) {
-      pinBtn.classList.add('is-pinned');
-      pinBtn.setAttribute('title', '言葉aの固定を解除 (Pin ON)');
-      pinBtn.setAttribute('aria-pressed', 'true');
-    } else {
-      pinBtn.classList.remove('is-pinned');
-      pinBtn.setAttribute('title', '言葉aを固定 (Pin OFF)');
-      pinBtn.setAttribute('aria-pressed', 'false');
+    if (pinBtnA) {
+      const isA = pinnedSlot === 'a';
+      pinBtnA.classList.toggle('is-pinned', isA);
+      pinBtnA.setAttribute('title', isA ? '言葉aの固定を解除 (Pin ON)' : '言葉aを固定 (Pin OFF)');
+      pinBtnA.setAttribute('aria-pressed', isA ? 'true' : 'false');
+    }
+    if (pinBtnB) {
+      const isB = pinnedSlot === 'b';
+      pinBtnB.classList.toggle('is-pinned', isB);
+      pinBtnB.setAttribute('title', isB ? '言葉bの固定を解除 (Pin ON)' : '言葉bを固定 (Pin OFF)');
+      pinBtnB.setAttribute('aria-pressed', isB ? 'true' : 'false');
     }
   }
 
@@ -121,15 +133,17 @@
     if (words.length === 0) {
       currentWordA = '—';
       currentWordB = '—';
-      isSlotAPinned = false;
+      pinnedSlot = null;
       updatePinDOM();
     } else if (words.length === 1) {
       currentWordA = words[0];
       currentWordB = '...';
+      pinnedSlot = null;
+      updatePinDOM();
     } else {
       let a, b;
-      // 言葉aが固定されている場合
-      if (isSlotAPinned && words.includes(currentWordA)) {
+      if (pinnedSlot === 'a' && words.includes(currentWordA)) {
+        // 言葉aが固定されている場合
         a = currentWordA;
         const remaining = words.filter(w => w !== a);
         if (priorityB && remaining.includes(priorityB)) {
@@ -139,10 +153,21 @@
         } else {
           b = remaining[Math.floor(Math.random() * remaining.length)];
         }
+      } else if (pinnedSlot === 'b' && words.includes(currentWordB)) {
+        // 言葉bが固定されている場合
+        b = currentWordB;
+        const remaining = words.filter(w => w !== b);
+        if (priorityA && remaining.includes(priorityA)) {
+          a = priorityA;
+        } else if (priorityB && remaining.includes(priorityB) && priorityB !== b) {
+          a = priorityB;
+        } else {
+          a = remaining[Math.floor(Math.random() * remaining.length)];
+        }
       } else {
         // ピン留めなし、あるいは固定されていた単語が削除されていた場合
-        if (isSlotAPinned) {
-          isSlotAPinned = false;
+        if (pinnedSlot !== null) {
+          pinnedSlot = null;
           updatePinDOM();
         }
 
@@ -183,11 +208,13 @@
     slotAEl.textContent = currentWordA;
     slotBEl.textContent = currentWordB;
     
-    // 言葉aが固定されているときは言葉aのアニメーションをスキップ
-    if (!isSlotAPinned) {
+    // 固定されているスロットはポップアニメーションをスキップ
+    if (pinnedSlot !== 'a') {
       slotAEl.classList.add('word-pop');
     }
-    slotBEl.classList.add('word-pop');
+    if (pinnedSlot !== 'b') {
+      slotBEl.classList.add('word-pop');
+    }
 
     // Subtle connector spin
     if (connectorIcon) {
@@ -286,8 +313,8 @@
 
       // If the deleted word was on the stage, re-roll stage words
       if (currentWordA === word || currentWordB === word) {
-        if (currentWordA === word) {
-          isSlotAPinned = false;
+        if ((pinnedSlot === 'a' && currentWordA === word) || (pinnedSlot === 'b' && currentWordB === word)) {
+          pinnedSlot = null;
           updatePinDOM();
         }
         rollStageWords();
@@ -335,8 +362,10 @@
       } else {
         showToast('入力された言葉はすべて登録済みです');
       }
-      if (isSlotAPinned) {
+      if (pinnedSlot === 'a') {
         rollStageWords(null, uniqueTokens[0]);
+      } else if (pinnedSlot === 'b') {
+        rollStageWords(uniqueTokens[0], null);
       } else {
         rollStageWords(uniqueTokens[0], uniqueTokens[1] || null);
       }
@@ -357,8 +386,13 @@
     renderTagCloud();
 
     // ステージを更新
-    if (isSlotAPinned) {
+    if (pinnedSlot === 'a') {
       rollStageWords(null, newWords[0]);
+      if (newWords.length >= 2) {
+        showToast(`${newWords.length} 語を登録しました`);
+      }
+    } else if (pinnedSlot === 'b') {
+      rollStageWords(newWords[0], null);
       if (newWords.length >= 2) {
         showToast(`${newWords.length} 語を登録しました`);
       }
@@ -374,7 +408,7 @@
    * Reset words to default initial presets ('word', 'formation')
    */
   function handleReset() {
-    isSlotAPinned = false;
+    pinnedSlot = null;
     updatePinDOM();
     words = [...DEFAULT_WORDS];
     saveWords();
@@ -471,7 +505,8 @@
     wordForm.addEventListener('submit', handleAddWord);
     if (btnReset) btnReset.addEventListener('click', handleReset);
     combinedPreview.addEventListener('click', handleCopy);
-    if (pinBtn) pinBtn.addEventListener('click', togglePinSlotA);
+    if (pinBtnA) pinBtnA.addEventListener('click', () => togglePinSlot('a'));
+    if (pinBtnB) pinBtnB.addEventListener('click', () => togglePinSlot('b'));
 
     // Keep input focused when clicking on background empty spaces (desktop only)
     document.addEventListener('click', (e) => {
