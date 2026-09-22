@@ -10,7 +10,7 @@
   const STORAGE_KEY = 'wordformation_words';
   const DEFAULT_WORDS = ['word', 'formation'];
   const MAX_WORD_LENGTH = 32;       // 1単語の最大文字数
-  const MAX_WORDS_PER_SUBMIT = 500; // 一度に登録できる最大単語数
+  const MAX_WORDS_LIMIT = 600;      // 最大単語数（一度の登録 / 全体の最大保持数）
 
   // DOM Elements
   const wordForm = document.getElementById('word-form');
@@ -79,7 +79,7 @@
               });
             }
           });
-          words = sanitized.length > 0 ? sortWords(sanitized) : sortWords([...DEFAULT_WORDS]);
+          words = (sanitized.length > 0 ? sortWords(sanitized) : sortWords([...DEFAULT_WORDS])).slice(0, MAX_WORDS_LIMIT);
           saveWords();
           return;
         }
@@ -415,10 +415,10 @@
       return;
     }
 
-    // 一度に登録できる単語数は最大500語まで
+    // 一度に登録できる単語数は最大600語まで
     let exceededMaxWords = false;
-    if (rawTokens.length > MAX_WORDS_PER_SUBMIT) {
-      rawTokens = rawTokens.slice(0, MAX_WORDS_PER_SUBMIT);
+    if (rawTokens.length > MAX_WORDS_LIMIT) {
+      rawTokens = rawTokens.slice(0, MAX_WORDS_LIMIT);
       exceededMaxWords = true;
     }
 
@@ -475,8 +475,12 @@
       return;
     }
 
-    // 新しい言葉を追加し、A-Z・五十音順に綺麗にソート
+    // 新しい言葉を追加し、A-Z・五十音順に綺麗にソート（最大600語まで保持）
     words = sortWords([...words, ...newWords]);
+    if (words.length > MAX_WORDS_LIMIT) {
+      words = words.slice(0, MAX_WORDS_LIMIT);
+      exceededMaxWords = true;
+    }
     saveWords();
 
     // 入力欄をクリアして即フォーカス維持
@@ -500,7 +504,7 @@
     // トースト通知（語数、上限・文字数オーバー時の注記）
     let toastMsg = '';
     if (exceededMaxWords) {
-      toastMsg = `先頭${MAX_WORDS_PER_SUBMIT}語のうち ${newWords.length} 語を登録しました`;
+      toastMsg = `最大${MAX_WORDS_LIMIT}語の上限に合わせて登録しました`;
     } else if (newWords.length >= 2) {
       toastMsg = `${newWords.length} 語を登録しました`;
     }
