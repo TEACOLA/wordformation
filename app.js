@@ -43,6 +43,20 @@
   }
 
   /**
+   * Sort words array in natural alphabetical / syllabary order (A-Z, あ-ん)
+   * @param {string[]} list
+   * @returns {string[]}
+   */
+  function sortWords(list) {
+    return [...list].sort((a, b) => {
+      return a.localeCompare(b, ['ja', 'en'], {
+        sensitivity: 'base',
+        numeric: true,
+      });
+    });
+  }
+
+  /**
    * Load words from localStorage or initialize with defaults
    */
   function loadWords() {
@@ -63,7 +77,7 @@
               });
             }
           });
-          words = sanitized.length > 0 ? sanitized : [...DEFAULT_WORDS];
+          words = sanitized.length > 0 ? sortWords(sanitized) : sortWords([...DEFAULT_WORDS]);
           saveWords();
           return;
         }
@@ -72,7 +86,7 @@
       console.warn('Failed to load words from localStorage:', e);
     }
     // Fallback to default presets
-    words = [...DEFAULT_WORDS];
+    words = sortWords([...DEFAULT_WORDS]);
     saveWords();
   }
 
@@ -268,7 +282,10 @@
       return;
     }
 
-    words.forEach(word => {
+    // A to Z、あいうえお順に整然とソートして表示
+    const sortedList = sortWords(words);
+
+    sortedList.forEach(word => {
       const tag = document.createElement('button');
       tag.type = 'button';
       tag.className = 'word-tag';
@@ -374,8 +391,8 @@
       return;
     }
 
-    // 新しい言葉を配列の先頭に追加（入力順が左から並ぶよう配置）
-    words.unshift(...newWords);
+    // 新しい言葉を追加し、A-Z・五十音順に綺麗にソート
+    words = sortWords([...words, ...newWords]);
     saveWords();
 
     // 入力欄をクリアして即フォーカス維持
@@ -410,7 +427,7 @@
   function handleReset() {
     pinnedSlot = null;
     updatePinDOM();
-    words = [...DEFAULT_WORDS];
+    words = sortWords([...DEFAULT_WORDS]);
     saveWords();
     renderAll();
     ensureInputFocus();
