@@ -15,6 +15,7 @@
   const wordInput = document.getElementById('word-input');
   const slotAEl = document.getElementById('word-a');
   const slotBEl = document.getElementById('word-b');
+  const pinBtn = document.getElementById('pin-btn');
   const connectorIcon = document.getElementById('connector-icon');
   const combinedPreview = document.getElementById('combined-preview');
   const combinedText = document.getElementById('combined-text');
@@ -28,6 +29,7 @@
   let words = [];
   let currentWordA = '';
   let currentWordB = '';
+  let isSlotAPinned = false;
 
   /**
    * Initialize Application
@@ -85,6 +87,32 @@
   }
 
   /**
+   * Toggle Pin (lock) state for slot A
+   */
+  function togglePinSlotA() {
+    if (words.length === 0 || !currentWordA || currentWordA === '—') return;
+    isSlotAPinned = !isSlotAPinned;
+    updatePinDOM();
+    ensureInputFocus();
+  }
+
+  /**
+   * Update Pin Button UI state
+   */
+  function updatePinDOM() {
+    if (!pinBtn) return;
+    if (isSlotAPinned) {
+      pinBtn.classList.add('is-pinned');
+      pinBtn.setAttribute('title', '言葉aの固定を解除 (Pin ON)');
+      pinBtn.setAttribute('aria-pressed', 'true');
+    } else {
+      pinBtn.classList.remove('is-pinned');
+      pinBtn.setAttribute('title', '言葉aを固定 (Pin OFF)');
+      pinBtn.setAttribute('aria-pressed', 'false');
+    }
+  }
+
+  /**
    * Pick 2 distinct words randomly and update the Stage display
    * @param {string} [priorityA] - Preferred word for slot A (or one of the slots)
    * @param {string} [priorityB] - Preferred word for slot B
@@ -93,26 +121,47 @@
     if (words.length === 0) {
       currentWordA = '—';
       currentWordB = '—';
+      isSlotAPinned = false;
+      updatePinDOM();
     } else if (words.length === 1) {
       currentWordA = words[0];
       currentWordB = '...';
     } else {
       let a, b;
-      if (priorityA && priorityB && priorityA !== priorityB && words.includes(priorityA) && words.includes(priorityB)) {
-        a = priorityA;
-        b = priorityB;
-      } else if (priorityA && words.includes(priorityA)) {
-        const remaining = words.filter(w => w !== priorityA);
-        const partner = remaining[Math.floor(Math.random() * remaining.length)];
-        const putInA = Math.random() < 0.5;
-        a = putInA ? priorityA : partner;
-        b = putInA ? partner : priorityA;
+      // 言葉aが固定されている場合
+      if (isSlotAPinned && words.includes(currentWordA)) {
+        a = currentWordA;
+        const remaining = words.filter(w => w !== a);
+        if (priorityB && remaining.includes(priorityB)) {
+          b = priorityB;
+        } else if (priorityA && remaining.includes(priorityA) && priorityA !== a) {
+          b = priorityA;
+        } else {
+          b = remaining[Math.floor(Math.random() * remaining.length)];
+        }
       } else {
-        const idxA = Math.floor(Math.random() * words.length);
-        let idxB = Math.floor(Math.random() * (words.length - 1));
-        if (idxB >= idxA) idxB++;
-        a = words[idxA];
-        b = words[idxB];
+        // ピン留めなし、あるいは固定されていた単語が削除されていた場合
+        if (isSlotAPinned) {
+          isSlotAPinned = false;
+          updatePinDOM();
+        }
+
+        if (priorityA && priorityB && priorityA !== priorityB && words.includes(priorityA) && words.includes(priorityB)) {
+          a = priorityA;
+          b = priorityB;
+        } else if (priorityA && words.includes(priorityA)) {
+          const remaining = words.filter(w => w !== priorityA);
+          const partner = remaining[Math.floor(Math.random() * remaining.length)];
+          const putInA = Math.random() < 0.5;
+          a = putInA ? priorityA : partner;
+          b = putInA ? partner : priorityA;
+        } else {
+          const idxA = Math.floor(Math.random() * words.length);
+          let idxB = Math.floor(Math.random() * (words.length - 1));
+          if (idxB >= idxA) idxB++;
+          a = words[idxA];
+          b = words[idxB];
+        }
       }
       currentWordA = a;
       currentWordB = b;
@@ -133,7 +182,11 @@
 
     slotAEl.textContent = currentWordA;
     slotBEl.textContent = currentWordB;
-    slotAEl.classList.add('word-pop');
+    
+    // 言葉aが固定されているときは言葉aのアニメーションをスキップ
+    if (!isSlotAPinned) {
+      slotAEl.classList.add('word-pop');
+    }
     slotBEl.classList.add('word-pop');
 
     // Subtle connector spin
@@ -233,6 +286,10 @@
 
       // If the deleted word was on the stage, re-roll stage words
       if (currentWordA === word || currentWordB === word) {
+        if (currentWordA === word) {
+          isSlotAPinned = false;
+          updatePinDOM();
+        }
         rollStageWords();
       }
 
@@ -278,7 +335,11 @@
       } else {
         showToast('入力された言葉はすべて登録済みです');
       }
-      rollStageWords(uniqueTokens[0], uniqueTokens[1] || null);
+      if (isSlotAPinned) {
+        rollStageWords(null, uniqueTokens[0]);
+      } else {
+        rollStageWords(uniqueTokens[0], uniqueTokens[1] || null);
+      }
       wordInput.value = '';
       ensureInputFocus();
       return;
@@ -295,8 +356,13 @@
     // タグクラウドを再描画
     renderTagCloud();
 
-    // ステージを更新（2つ以上新規登録されたら、その新語同士を優先表示）
-    if (newWords.length >= 2) {
+    // ステージを更新
+    if (isSlotAPinned) {
+      rollStageWords(null, newWords[0]);
+      if (newWords.length >= 2) {
+        showToast(`${newWords.length} 語を登録しました`);
+      }
+    } else if (newWords.length >= 2) {
       rollStageWords(newWords[0], newWords[1]);
       showToast(`${newWords.length} 語を登録しました`);
     } else {
@@ -308,6 +374,8 @@
    * Reset words to default initial presets ('word', 'formation')
    */
   function handleReset() {
+    isSlotAPinned = false;
+    updatePinDOM();
     words = [...DEFAULT_WORDS];
     saveWords();
     renderAll();
@@ -403,6 +471,7 @@
     wordForm.addEventListener('submit', handleAddWord);
     if (btnReset) btnReset.addEventListener('click', handleReset);
     combinedPreview.addEventListener('click', handleCopy);
+    if (pinBtn) pinBtn.addEventListener('click', togglePinSlotA);
 
     // Keep input focused when clicking on background empty spaces (desktop only)
     document.addEventListener('click', (e) => {
@@ -410,7 +479,8 @@
       if (
         !e.target.closest('button') && 
         !e.target.closest('input') && 
-        !e.target.closest('.combined-preview')
+        !e.target.closest('.combined-preview') &&
+        !e.target.closest('.pin-btn')
       ) {
         ensureInputFocus();
       }
