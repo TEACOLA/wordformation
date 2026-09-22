@@ -178,6 +178,12 @@ body {
   z-index: 2;
 }
 
+/* 言葉bのピンは右端に配置 */
+.slot-b .pin-btn {
+  left: auto;
+  right: 2px;
+}
+
 .pin-btn:hover {
   opacity: 0.9;
   color: var(--text-primary);
@@ -556,6 +562,11 @@ body {
     left: 0px;
     width: 24px;
     height: 24px;
+  }
+
+  .slot-b .pin-btn {
+    left: auto;
+    right: 0px;
   }
 
   .pin-btn svg {
