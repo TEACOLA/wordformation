@@ -251,6 +251,60 @@
   }
 
   /**
+   * Swap words between slot A and slot B (triggered by clicking the '+' connector)
+   */
+  let connectorRotation = 0;
+  function swapStageWords() {
+    if (
+      words.length < 2 || 
+      !currentWordA || 
+      !currentWordB || 
+      currentWordA === '—' || 
+      currentWordB === '...' || 
+      currentWordB === '—'
+    ) {
+      return;
+    }
+
+    // 単語を入れ替え
+    const temp = currentWordA;
+    currentWordA = currentWordB;
+    currentWordB = temp;
+
+    // 固定（ピン留め）されている場合、ピン留めスロットも単語に合わせて追従
+    if (pinnedSlot === 'a') {
+      pinnedSlot = 'b';
+    } else if (pinnedSlot === 'b') {
+      pinnedSlot = 'a';
+    }
+    updatePinDOM();
+
+    // コネクタアイコンをクルッと回転
+    connectorRotation += 180;
+    if (connectorIcon) {
+      connectorIcon.style.transform = `rotate(${connectorRotation}deg)`;
+    }
+
+    // スワップ時のポップアニメーション
+    slotAEl.classList.remove('word-pop');
+    slotBEl.classList.remove('word-pop');
+    void slotAEl.offsetWidth; // force reflow
+    void slotBEl.offsetWidth;
+
+    slotAEl.textContent = currentWordA;
+    slotBEl.textContent = currentWordB;
+    slotAEl.classList.add('word-pop');
+    slotBEl.classList.add('word-pop');
+
+    // 結合プレビューの更新
+    combinedText.textContent = `${currentWordA}${currentWordB}`;
+    combinedPreview.style.visibility = 'visible';
+
+    highlightActiveTags();
+    ensureInputFocus();
+  }
+
+  /**
    * Highlight tags that are currently featured in the stage
    */
   function highlightActiveTags() {
@@ -522,6 +576,7 @@
     wordForm.addEventListener('submit', handleAddWord);
     if (btnReset) btnReset.addEventListener('click', handleReset);
     combinedPreview.addEventListener('click', handleCopy);
+    if (connectorIcon) connectorIcon.addEventListener('click', swapStageWords);
     if (pinBtnA) pinBtnA.addEventListener('click', () => togglePinSlot('a'));
     if (pinBtnB) pinBtnB.addEventListener('click', () => togglePinSlot('b'));
 
