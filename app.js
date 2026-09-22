@@ -8,6 +8,7 @@
 
   // Constants & Storage Keys
   const STORAGE_KEY = 'wordformation_words';
+  const STORAGE_KEY_PIN = 'wordformation_pin';
   const DEFAULT_WORDS = ['word', 'formation'];
   const MAX_WORD_LENGTH = 32;       // 1単語の最大文字数
   const MAX_WORDS_LIMIT = 600;      // 最大単語数（一度の登録 / 全体の最大保持数）
@@ -39,7 +40,16 @@
    */
   function init() {
     loadWords();
-    renderAll();
+    const hasPinned = loadPinState();
+    if (hasPinned) {
+      // ピン留めされていた単語を保持したままステージを更新
+      rollStageWords();
+      renderTagCloud();
+      updatePinDOM();
+    } else {
+      renderAll();
+      updatePinDOM();
+    }
     setupEventListeners();
     ensureInputFocus();
   }
@@ -104,6 +114,49 @@
   }
 
   /**
+   * Load pin state from localStorage
+   * @returns {boolean} Whether a valid pin state was restored
+   */
+  function loadPinState() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_PIN);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && (parsed.slot === 'a' || parsed.slot === 'b') && parsed.word && words.includes(parsed.word)) {
+          pinnedSlot = parsed.slot;
+          if (parsed.slot === 'a') {
+            currentWordA = parsed.word;
+          } else {
+            currentWordB = parsed.word;
+          }
+          return true;
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load pin state:', e);
+    }
+    pinnedSlot = null;
+    return false;
+  }
+
+  /**
+   * Save pin state to localStorage
+   */
+  function savePinState() {
+    try {
+      if (pinnedSlot === 'a' && currentWordA && currentWordA !== '—') {
+        localStorage.setItem(STORAGE_KEY_PIN, JSON.stringify({ slot: 'a', word: currentWordA }));
+      } else if (pinnedSlot === 'b' && currentWordB && currentWordB !== '—' && currentWordB !== '...') {
+        localStorage.setItem(STORAGE_KEY_PIN, JSON.stringify({ slot: 'b', word: currentWordB }));
+      } else {
+        localStorage.removeItem(STORAGE_KEY_PIN);
+      }
+    } catch (e) {
+      console.warn('Failed to save pin state:', e);
+    }
+  }
+
+  /**
    * Toggle Pin (lock) state for slot A or B (Mutually exclusive: only one can be pinned)
    * @param {'a' | 'b'} slot
    */
@@ -119,6 +172,7 @@
       pinnedSlot = slot;
     }
     updatePinDOM();
+    savePinState();
     ensureInputFocus();
   }
 
@@ -151,11 +205,13 @@
       currentWordB = '—';
       pinnedSlot = null;
       updatePinDOM();
+      savePinState();
     } else if (words.length === 1) {
       currentWordA = words[0];
       currentWordB = '...';
       pinnedSlot = null;
       updatePinDOM();
+      savePinState();
     } else {
       let a, b;
       if (pinnedSlot === 'a' && words.includes(currentWordA)) {
@@ -185,6 +241,7 @@
         if (pinnedSlot !== null) {
           pinnedSlot = null;
           updatePinDOM();
+          savePinState();
         }
 
         if (priorityA && priorityB && priorityA !== priorityB && words.includes(priorityA) && words.includes(priorityB)) {
@@ -280,6 +337,7 @@
       pinnedSlot = 'a';
     }
     updatePinDOM();
+    savePinState();
 
     // コネクタアイコンをクルッと回転
     connectorRotation += 180;
@@ -376,6 +434,7 @@
       if (words.length === 0) {
         try {
           localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(STORAGE_KEY_PIN);
         } catch (e) {}
         location.reload();
         return;
@@ -389,6 +448,7 @@
         if ((pinnedSlot === 'a' && currentWordA === word) || (pinnedSlot === 'b' && currentWordB === word)) {
           pinnedSlot = null;
           updatePinDOM();
+          savePinState();
         }
         rollStageWords();
       }
@@ -522,6 +582,7 @@
   function handleReset() {
     pinnedSlot = null;
     updatePinDOM();
+    savePinState();
     words = sortWords([...DEFAULT_WORDS]);
     saveWords();
     renderAll();
