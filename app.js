@@ -180,17 +180,24 @@
    * Update Pin Button UI states
    */
   function updatePinDOM() {
+    const isA = pinnedSlot === 'a';
+    const isB = pinnedSlot === 'b';
+
     if (pinBtnA) {
-      const isA = pinnedSlot === 'a';
       pinBtnA.classList.toggle('is-pinned', isA);
       pinBtnA.setAttribute('title', isA ? '言葉aの固定を解除 (Pin ON)' : '言葉aを固定 (Pin OFF)');
       pinBtnA.setAttribute('aria-pressed', isA ? 'true' : 'false');
     }
     if (pinBtnB) {
-      const isB = pinnedSlot === 'b';
       pinBtnB.classList.toggle('is-pinned', isB);
       pinBtnB.setAttribute('title', isB ? '言葉bの固定を解除 (Pin ON)' : '言葉bを固定 (Pin OFF)');
       pinBtnB.setAttribute('aria-pressed', isB ? 'true' : 'false');
+    }
+    if (slotAEl) {
+      slotAEl.setAttribute('title', isA ? 'クリックして言葉aの固定を解除 (Pin ON)' : 'クリックして言葉aを固定 (Pin OFF)');
+    }
+    if (slotBEl) {
+      slotBEl.setAttribute('title', isB ? 'クリックして言葉bの固定を解除 (Pin ON)' : 'クリックして言葉bを固定 (Pin OFF)');
     }
   }
 
@@ -681,6 +688,8 @@
     if (connectorIcon) connectorIcon.addEventListener('click', swapStageWords);
     if (pinBtnA) pinBtnA.addEventListener('click', () => togglePinSlot('a'));
     if (pinBtnB) pinBtnB.addEventListener('click', () => togglePinSlot('b'));
+    if (slotAEl) slotAEl.addEventListener('click', () => togglePinSlot('a'));
+    if (slotBEl) slotBEl.addEventListener('click', () => togglePinSlot('b'));
 
     // Keep input focused when clicking on background empty spaces (desktop only)
     document.addEventListener('click', (e) => {
@@ -689,7 +698,8 @@
         !e.target.closest('button') && 
         !e.target.closest('input') && 
         !e.target.closest('.combined-preview') &&
-        !e.target.closest('.pin-btn')
+        !e.target.closest('.pin-btn') &&
+        !e.target.closest('.slot-content')
       ) {
         ensureInputFocus();
       }

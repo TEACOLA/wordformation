@@ -153,9 +153,25 @@ body {
   color: var(--text-primary);
   text-align: center;
   word-break: break-word;
+  width: 100%;
   max-width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1.25;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
   transition: transform var(--transition-spring), opacity var(--transition-fast);
+}
+
+.slot-content:hover {
+  opacity: 0.75;
+}
+
+.slot-content:active {
+  transform: scale(0.96);
 }
 
 /* Pin Button (言葉aの固定・ロック) */
