@@ -20,26 +20,7 @@
 <body>
   <div class="app-container">
 
-    <!-- (1) 言葉を入力するフォーム（最上段） -->
-    <section class="input-section" aria-label="言葉の登録">
-      <form id="word-form" class="word-form" autocomplete="off">
-        <div class="input-wrapper">
-          <input 
-            type="text" 
-            id="word-input" 
-            class="word-input" 
-            placeholder="maximum 600 words"
-            autofocus 
-            aria-label="登録したい言葉"
-          />
-          <button type="submit" class="submit-btn" id="submit-btn" title="登録 (Enter)" aria-label="登録">
-            <span class="enter-badge">↵ Enter</span>
-          </button>
-        </div>
-      </form>
-    </section>
-
-    <!-- (2) 造語インスピレーションステージ -->
+    <!-- (1) 造語インスピレーションステージ（最上部） -->
     <section class="stage-section" aria-label="造語ステージ">
       <div class="stage-card" id="stage-card">
         <div class="word-slots">
@@ -86,6 +67,25 @@
         </div>
       </div>
     </section>
+
+    <!-- (2) 言葉を入力するフォーム -->
+    <section class="input-section" aria-label="言葉の登録">
+      <form id="word-form" class="word-form" autocomplete="off">
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="word-input" 
+            class="word-input" 
+            placeholder="maximum 600 words"
+            autofocus 
+            aria-label="登録したい言葉"
+          />
+          <button type="submit" class="submit-btn" id="submit-btn" title="登録 (Enter)" aria-label="登録">
+            <span class="enter-badge">↵ Enter</span>
+          </button>
+        </div>
+      </form>
+    </section>
   </div>
 
   <!-- (3) 登録した言葉のタグクラウド（画面最下部まで全幅で直結） -->
@@ -100,6 +100,6 @@
   <!-- Toast notification -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=20260923h"></script>
+  <script src="app.js?v=20260924a"></script>
 </body>
 </html>
