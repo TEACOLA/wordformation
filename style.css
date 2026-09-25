@@ -350,7 +350,7 @@ body {
   align-items: center;
   background: var(--bg-surface);
   border: 1.5px solid var(--border-medium);
-  border-radius: var(--radius-md) var(--radius-full) var(--radius-full) var(--radius-md); /* 左側は適度な角丸(14px)、右側はカプセル角丸 */
+  border-radius: 18px 36px 36px 18px; /* 左側はしっかりと目に見える角丸(18px)、右側は半円カプセル(36px) */
   min-height: 70px; /* 縦幅を従来の約1.3倍に設定 */
   padding: 0.5rem 0.7rem 0.5rem 1.5rem;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
@@ -657,6 +657,7 @@ body {
   .input-wrapper {
     min-height: 62px; /* モバイルでも縦幅を約1.3倍に */
     padding: 0.42rem 0.55rem 0.42rem 1.1rem;
+    border-radius: 15px 31px 31px 15px;
   }
 
   .submit-btn {
