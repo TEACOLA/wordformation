@@ -268,6 +268,7 @@ body {
 .combined-bar {
   display: flex;
   justify-content: center;
+  padding-bottom: 1em; /* 1文字分の下余白 */
 }
 
 .combined-preview {
