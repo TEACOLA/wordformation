@@ -528,6 +528,7 @@ body {
 .cloud-footer {
   margin-top: auto;
   padding-top: 2.5rem;
+  padding-bottom: 2em; /* 2文字分の下余白 */
   display: flex;
   justify-content: center;
   align-items: center;
