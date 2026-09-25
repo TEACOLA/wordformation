@@ -532,8 +532,42 @@ body {
   padding: 2rem 0;
 }
 
+/* Cloud Footer & Clear Action */
+.cloud-footer {
+  margin-top: auto;
+  padding-top: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
 
+.btn-clear {
+  background: #FFFFFF;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-full);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  padding: 0.32rem 0.85rem;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: all var(--transition-fast);
+}
 
+.btn-clear:hover {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  background: #FFFFFF;
+  box-shadow: 0 1px 4px rgba(0, 102, 204, 0.15);
+}
+
+.btn-clear:active {
+  transform: scale(0.96);
+}
 
 /* Toast */
 .toast {
