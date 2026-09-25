@@ -350,7 +350,7 @@ body {
   align-items: center;
   background: var(--bg-surface);
   border: 1.5px solid var(--border-medium);
-  border-radius: 0 var(--radius-full) var(--radius-full) 0; /* 左側は普通の角、右側は角丸 */
+  border-radius: var(--radius-sm) var(--radius-full) var(--radius-full) var(--radius-sm); /* 左側はほんのり角丸(8px)、右側はカプセル角丸 */
   min-height: 70px; /* 縦幅を従来の約1.3倍に設定 */
   padding: 0.5rem 0.7rem 0.5rem 1.5rem;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
