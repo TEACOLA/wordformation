@@ -328,6 +328,18 @@ body {
    ========================================================================== */
 .input-section {
   width: 100%;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: none;
+  display: flex;
+  justify-content: center;
+  padding: 1.75rem 1.25rem 1.25rem;
+  box-sizing: border-box;
+}
+
+.input-inner {
+  width: 100%;
+  max-width: var(--container-max-width);
 }
 
 .word-form {
@@ -407,13 +419,10 @@ body {
   width: 100%;
   flex: 1;
   background: var(--bg-surface);
-  border-top: 1px solid var(--border-subtle);
-  border-bottom: none;
-  border-left: none;
-  border-right: none;
+  border: none;
   border-radius: 0;
   margin: 0;
-  padding: 1.75rem 1.25rem 4rem;
+  padding: 0 1.25rem 4rem;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -667,7 +676,11 @@ body {
     font-size: clamp(1.15rem, 5vw, 1.45rem); /* 約1.5倍 */
   }
 
+  .input-section {
+    padding: 1.25rem 0.75rem 1rem;
+  }
+
   .cloud-section {
-    padding: 1.25rem 0.75rem 4rem;
+    padding: 0 0.75rem 4rem;
   }
 }
