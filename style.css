@@ -486,21 +486,14 @@ body {
   font-weight: 700;
 }
 
-/* Tag Hover - Intuitive Deletion Indicator */
+/* Tag Hover - Intuitive Deletion Indicator (ボタンサイズを維持してレイアウト崩れを防止) */
 .word-tag:hover {
   background: var(--danger-bg);
   border-color: var(--danger-border);
   color: var(--danger-text);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
   transform: translateY(-1px);
-}
-
-.word-tag:hover::after {
-  content: '×';
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--danger);
-  margin-left: 0.15rem;
-  line-height: 1;
 }
 
 .word-tag:active {
