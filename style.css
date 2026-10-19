@@ -440,7 +440,6 @@ body {
 .tag-cloud {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 0.55rem;
   min-height: 80px;
   align-content: flex-start;
