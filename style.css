@@ -333,7 +333,7 @@ body {
   border-bottom: none;
   display: flex;
   justify-content: center;
-  padding: 1.75rem 1.25rem 0;
+  padding: 1.75rem 1.25rem 1.25rem;
   box-sizing: border-box;
 }
 
@@ -679,7 +679,7 @@ body {
   }
 
   .input-section {
-    padding: 1.25rem 0.75rem 0;
+    padding: 1.25rem 0.75rem 1rem;
   }
 
   .cloud-section {
